@@ -1,16 +1,14 @@
 import os
 from discord.ext import commands
+import discord
+import music
 
-bot = commands.Bot(command_prefix="!")
+cogs = [music]
+bot = commands.Bot(command_prefix="!",  intents = discord.Intents.all())
 TOKEN = os.getenv("DISCORD_TOKEN")
 
-@bot.event
-async def on_ready():
-    print(f"Logged in as {bot.user.name}({bot.user.id})")
-
-@bot.command()
-async def ping(ctx):
-    await ctx.send("pong")
+for i in range(len(cogs)):
+      cogs[i].setup(bot)
 
 if __name__ == "__main__":
     bot.run(TOKEN)

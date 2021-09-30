@@ -1,1 +1,4 @@
-discord.py
+discord == 1.7.3
+youtube_dl
+PyNaCl == 1.4.0
+
