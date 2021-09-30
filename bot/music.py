@@ -36,7 +36,7 @@ class music(commands.Cog):
       else:
         url2 = info['formats'][0]['url']
 
-      source = await discord.FFmpegOpusAudio.from_probe(self.queue[0], **FFMPEG_OPTIONS)
+      source = await discord.FFmpegOpusAudio.from_probe(url, **FFMPEG_OPTIONS)
       self.queue.append(source)
       if not vc.is_playing():
         vc.play(source, after=lambda e: self.play_next(ctx))
