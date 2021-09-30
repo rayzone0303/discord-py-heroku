@@ -29,7 +29,10 @@ class music(commands.Cog):
 
     with youtube_dl.YoutubeDL(YDL_OPTIONS) as ydl:
       info = ydl.extract_info(url, download=False)
-      url2 = info['formats'][0]['url']
+      if 'entries' in info:
+        url2 = info['entries'][0]['formats'][0]['url']
+      else:
+        url2 = info['formats'][0]['url']
       source = await discord.FFmpegOpusAudio.from_probe(url2, **FFMPEG_OPTIONS)
       vc.play(source)
 
