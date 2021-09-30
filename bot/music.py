@@ -39,7 +39,7 @@ class music(commands.Cog):
       source = await discord.FFmpegOpusAudio.from_probe(url, **FFMPEG_OPTIONS)
       self.queue.append(source)
       if not vc.is_playing():
-        vc.play(source, after=lambda e: self.play_next(ctx))
+        vc.play(source, lambda e: self.play_next(ctx))
         await ctx.send('Now playing...')
       else:
         await ctx.send('Song queued')
@@ -49,7 +49,7 @@ class music(commands.Cog):
     if len(self.queue) >= 1:
       del self.queue[0]
       vc = ctx.voice_client
-      vc.play(self.queue[0], after=lambda e: self.play_next(ctx))
+      vc.play(self.queue[0], lambda e: self.play_next(ctx))
 
   @commands.command()
   async def pause(self,ctx):
