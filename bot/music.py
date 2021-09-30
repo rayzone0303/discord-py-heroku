@@ -28,28 +28,37 @@ class music(commands.Cog):
     FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options':'-vn'}
     YDL_OPTIONS = {'format':'bestaudio', 'default_search': 'auto'}
     vc = ctx.voice_client
-
     with youtube_dl.YoutubeDL(YDL_OPTIONS) as ydl:
       info = ydl.extract_info(url, download=False)
       if 'entries' in info:
         url2 = info['entries'][0]['formats'][0]['url']
       else:
         url2 = info['formats'][0]['url']
+      try:
+        source = await discord.FFmpegOpusAudio.from_probe(url2, **FFMPEG_OPTIONS)
+        if not vc.is_playing():
+          vc.play(source=source, after=self.myafter)
+          await ctx.send('Now playing...')
+        else:
+          self.queue.append(source)
+          await ctx.send('Song queued')
+      except Exception as e:
+        print(e)
 
-      source = await discord.FFmpegOpusAudio.from_probe(url, **FFMPEG_OPTIONS)
-      self.queue.append(source)
-      if not vc.is_playing():
-        vc.play(source, lambda e: self.play_next(ctx))
-        await ctx.send('Now playing...')
-      else:
-        await ctx.send('Song queued')
+  
+  def playit(self):
+    try:
+        self.client.voice_clients[0].play(source=self.queue[0], after = self.myafter)
+        self.queue.pop(0)
+    except Exception as e:
+        print(e)
 
-  @commands.command()
-  async def play_next(self,ctx):
-    if len(self.queue) >= 1:
-      del self.queue[0]
-      vc = ctx.voice_client
-      vc.play(self.queue[0], lambda e: self.play_next(ctx))
+  def myafter(self,error):
+    try:
+        fut = asyncio.run_coroutine_threadsafe(self.playit(), self.client.loop)
+        fut.result()
+    except Exception as e:
+        print(e)
 
   @commands.command()
   async def pause(self,ctx):
@@ -62,10 +71,16 @@ class music(commands.Cog):
     await ctx.send("Resume")
 
   @commands.command()
-  async def stop(self,ctx):
+  async def skip(self,ctx):
     await ctx.voice_client.stop()
-    await ctx.send("Stopped")
+    await ctx.send("Skipped")
 
+  @commands.command()
+  async def view(self,ctx):
+    await ctx.send('Song List to Play:')
+    for i, x in enumerate(self.queue):
+      message = "Queue["+str(i+1)+"]: "+str(x)
+      await ctx.send(message)
 
 def setup(client):
   client.add_cog(music(client))
