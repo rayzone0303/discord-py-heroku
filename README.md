@@ -24,6 +24,9 @@ You must have an account for Discord [[Link](https://discordapp.com/developers/a
   * Click 'Confirm' to finalize the decision.
   * NOTE: You are allocated 550 free Dyno hours, which will not last the entire month. However, if you provide a credit card to verify your identity, you are given an additional 450 hours, which will allow your bot to run indefinitely.
 
+### Build Pack Problem
+You will only need the ffmpeg buildpack  [`jonathanong-ffmpeg`](https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git) and the opuslib [xrisk-heroku-opus](https://github.com/xrisk/heroku-opus)
+
 # TO-DO LIST
 * Revise the tutorial to be easier to understand for any user.
 * Add some images for following along with the process.
